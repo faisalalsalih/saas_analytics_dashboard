@@ -1,24 +1,27 @@
-/* Container Layout */
 .dashboard-container {
   display: grid;
-  grid-template-columns: 260px 1fr;
+  grid-template-columns: var(--sidebar-w) minmax(0, 1fr); /* minmax(0) stops wide tables/charts from blowing out the grid */
   min-height: 100vh;
+  min-height: 100dvh;
   position: relative;
 }
 
-/* Sidebar Styles */
+/* Sidebar */
 .sidebar {
   background-color: var(--bg-surface);
   border-right: 1px solid var(--border-color);
   padding: 1.5rem 1rem;
+  padding-left: calc(1rem + var(--safe-l));
+  padding-bottom: calc(1.5rem + var(--safe-b));
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   position: sticky;
   top: 0;
   height: 100vh;
+  height: 100dvh; /* fixes mobile browser toolbar cutting off the footer */
+  overflow-y: auto;
   z-index: 100;
-  transition: transform 0.3s ease-in-out;
 }
 
 .brand {
@@ -28,64 +31,44 @@
   padding: 0.5rem 0.75rem;
   margin-bottom: 2rem;
 }
+.brand-icon { color: var(--accent-primary); width: 28px; height: 28px; flex-shrink: 0; }
+.brand h2 { font-size: 1.25rem; font-weight: 700; letter-spacing: -0.02em; }
 
-.brand-icon {
-  color: var(--accent-primary);
-  width: 28px;
-  height: 28px;
-}
-
-.brand h2 {
-  font-size: 1.25rem;
-  font-weight: 700;
-  letter-spacing: -0.02em;
-}
-
-.nav-menu {
-  display: flex;
-  flex-direction: column;
-  gap: 0.35rem;
-}
+.nav-menu { display: flex; flex-direction: column; gap: 0.35rem; }
 
 .nav-item {
   display: flex;
   align-items: center;
   gap: 0.75rem;
+  min-height: var(--tap);
   padding: 0.75rem 1rem;
   color: var(--text-muted);
   text-decoration: none;
   border-radius: 8px;
   font-weight: 500;
   font-size: 0.9rem;
-  transition: all 0.2s ease;
+  transition: background-color 0.2s ease, color 0.2s ease;
 }
+.nav-item svg, .nav-item i { width: 18px; height: 18px; flex-shrink: 0; }
+.nav-item:hover, .nav-item.active { background-color: var(--bg-surface-hover); color: var(--text-main); }
+.nav-item.active { color: var(--accent-primary); }
 
-.nav-item:hover, .nav-item.active {
-  background-color: var(--bg-surface-hover);
-  color: var(--text-main);
-}
+.sidebar-footer { border-top: 1px solid var(--border-color); padding-top: 1rem; margin-top: 1rem; }
 
-.nav-item.active {
-  color: var(--accent-primary);
-}
-
-.sidebar-footer {
-  border-top: 1px solid var(--border-color);
-  padding-top: 1rem;
-}
-
-/* Main Wrapper */
+/* Main */
 .main-wrapper {
-  padding: 2rem;
+  padding: var(--page-pad);
+  padding-right: calc(var(--page-pad) + var(--safe-r));
+  padding-bottom: calc(var(--page-pad) + var(--safe-b));
   display: flex;
   flex-direction: column;
-  gap: 1.75rem;
+  gap: var(--gap);
   max-width: 1400px;
   margin: 0 auto;
   width: 100%;
+  min-width: 0;
 }
 
-/* Top Header */
 .top-header {
   display: flex;
   justify-content: space-between;
@@ -93,105 +76,80 @@
   gap: 1rem;
   flex-wrap: wrap;
 }
-
-.header-left {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-}
+.header-left { display: flex; align-items: center; gap: 0.75rem; min-width: 0; }
+.top-header h1 { font-size: var(--fs-h1); font-weight: 700; line-height: 1.25; }
+.subtitle { color: var(--text-muted); font-size: 0.875rem; margin-top: 0.25rem; }
 
 .mobile-menu-btn {
   display: none;
+  flex-shrink: 0;
+  width: var(--tap);
+  height: var(--tap);
+  align-items: center;
+  justify-content: center;
   background: var(--bg-surface);
   border: 1px solid var(--border-color);
   color: var(--text-main);
-  padding: 0.5rem;
   border-radius: 8px;
   cursor: pointer;
 }
 
-.top-header h1 {
-  font-size: 1.5rem;
-  font-weight: 700;
-}
-
-.subtitle {
-  color: var(--text-muted);
-  font-size: 0.875rem;
-  margin-top: 0.25rem;
-}
-
-/* Backdrop Overlay for Mobile Sidebar */
 .sidebar-overlay {
-  display: none;
   position: fixed;
   inset: 0;
   background: rgba(0, 0, 0, 0.5);
+  -webkit-backdrop-filter: blur(4px);
   backdrop-filter: blur(4px);
   z-index: 90;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s;
+}
+.sidebar-overlay.active { opacity: 1; visibility: visible; }
+
+/* Large desktops / ultrawide */
+@media (min-width: 1600px) {
+  :root { --sidebar-w: 280px; }
+  .main-wrapper { max-width: 1560px; }
 }
 
-/* ==========================================================
-   BREAKPOINTS: TABLET & MOBILE RESPONSIVENESS
-   ========================================================== */
-
-/* Tablet & Below (< 1024px) */
+/* Tablet & below: sidebar becomes a drawer */
 @media (max-width: 1024px) {
-  .dashboard-container {
-    grid-template-columns: 1fr;
-  }
-
-  .mobile-menu-btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
+  .dashboard-container { grid-template-columns: minmax(0, 1fr); }
+  .mobile-menu-btn { display: inline-flex; }
 
   .sidebar {
     position: fixed;
     top: 0;
     left: 0;
-    width: 260px;
-    height: 100%;
+    width: min(var(--sidebar-w), 85vw);
+    padding-top: calc(1.5rem + var(--safe-t));
     transform: translateX(-100%);
+    visibility: hidden; /* keeps hidden links out of the tab order */
+    transition: transform 0.3s ease-in-out, visibility 0s linear 0.3s;
+    box-shadow: var(--shadow-md);
   }
-
   .sidebar.open {
     transform: translateX(0);
+    visibility: visible;
+    transition: transform 0.3s ease-in-out, visibility 0s;
   }
-
-  .sidebar-overlay.active {
-    display: block;
-  }
-
   .main-wrapper {
-    padding: 1.25rem;
-    gap: 1.25rem;
+    padding-top: calc(var(--page-pad) + var(--safe-t));
+    padding-left: calc(var(--page-pad) + var(--safe-l));
   }
 }
 
-/* Mobile Devices (< 640px) */
+/* Mobile */
 @media (max-width: 640px) {
-  .top-header {
-    flex-direction: column;
-    align-items: flex-start;
-  }
+  .top-header { flex-direction: column; align-items: stretch; }
+  .header-actions, .time-range-picker { width: 100%; }
+  .range-btn { flex: 1; text-align: center; }
+}
 
-  .header-actions {
-    width: 100%;
-  }
-
-  .time-range-picker {
-    width: 100%;
-    display: flex;
-  }
-
-  .range-btn {
-    flex: 1;
-    text-align: center;
-  }
-
-  .top-header h1 {
-    font-size: 1.25rem;
-  }
+/* Short landscape phones: tighten vertical space */
+@media (max-height: 480px) and (orientation: landscape) {
+  .sidebar { padding-top: calc(0.75rem + var(--safe-t)); }
+  .brand { margin-bottom: 0.75rem; }
+  .nav-item { padding-block: 0.5rem; }
 }

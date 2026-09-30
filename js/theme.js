@@ -1,35 +1,22 @@
-const themeToggleBtn = document.getElementById('themeToggleBtn');
-const themeIcon = document.getElementById('themeIcon');
-const themeLabel = document.getElementById('themeLabel');
+const Theme = (() => {
+  const root = document.documentElement;
+  const btn = document.getElementById('themeToggleBtn');
+  const saved = localStorage.getItem('pulse-theme');
+  if (saved) root.setAttribute('data-theme', saved);
 
-function initTheme() {
-  const savedTheme = localStorage.getItem('theme') || 'dark';
-  document.documentElement.setAttribute('data-theme', savedTheme);
-  updateThemeUI(savedTheme);
-}
+  function render() {
+    const dark = root.getAttribute('data-theme') === 'dark';
+    btn.innerHTML = `<i data-lucide="${dark ? 'sun' : 'moon'}"></i><span id="themeLabel">${dark ? 'Light Mode' : 'Dark Mode'}</span>`;
+    if (window.lucide) lucide.createIcons();
+  }
 
-function updateThemeUI(theme) {
-  if (theme === 'dark') {
-    themeIcon.setAttribute('data-lucide', 'sun');
-    themeLabel.textContent = 'Light Mode';
-  } else {
-    themeIcon.setAttribute('data-lucide', 'moon');
-    themeLabel.textContent = 'Dark Mode';
-  }
-  if (window.lucide) {
-    lucide.createIcons();
-  }
-}
+  btn.addEventListener('click', () => {
+    const next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+    root.setAttribute('data-theme', next);
+    localStorage.setItem('pulse-theme', next);
+    render();
+    document.dispatchEvent(new CustomEvent('themechange'));
+  });
 
-themeToggleBtn.addEventListener('click', () => {
-  const currentTheme = document.documentElement.getAttribute('data-theme');
-  const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-  
-  document.documentElement.setAttribute('data-theme', newTheme);
-  localStorage.setItem('theme', newTheme);
-  updateThemeUI(newTheme);
-  
-  if (window.revenueChartInstance) {
-    updateChartColors();
-  }
-});
+  return { render };
+})();

@@ -1,63 +1,33 @@
-document.addEventListener('DOMContentLoaded', () => {
-  // 1. Mobile Navigation Backdrop Overlay Setup
-  const overlay = document.createElement('div');
-  overlay.className = 'sidebar-overlay';
-  document.body.appendChild(overlay);
+(() => {
+  const $ = (id) => document.getElementById(id);
+  let current = '30d';
 
-  const sidebar = document.querySelector('.sidebar');
-  const mobileMenuBtn = document.getElementById('mobileMenuBtn');
-
-  function toggleMobileSidebar() {
-    sidebar.classList.toggle('open');
-    overlay.classList.toggle('active');
+  function setKpis(rangeKey) {
+    const k = mockData.ranges[rangeKey].kpi;
+    $('kpiRevenue').textContent = k.revenue;
+    $('kpiUsers').textContent = k.users;
+    $('kpiChurn').textContent = k.churn;
+    [['kpiRevenueTrend', k.revenueTrend, true], ['kpiUsersTrend', k.usersTrend, true], ['kpiChurnTrend', k.churnTrend, false]]
+      .forEach(([id, text, upIsGood]) => {
+        const el = $(id);
+        const up = text.startsWith('+');
+        el.textContent = text;
+        el.className = 'badge ' + (up === upIsGood ? 'badge-success' : 'badge-danger');
+      });
   }
 
-  if (mobileMenuBtn) {
-    mobileMenuBtn.addEventListener('click', toggleMobileSidebar);
+  function setRange(rangeKey) {
+    current = rangeKey;
+    document.querySelectorAll('.range-btn').forEach((b) => b.classList.toggle('active', b.dataset.range === rangeKey));
+    setKpis(rangeKey);
+    Charts.build(rangeKey);
   }
 
-  overlay.addEventListener('click', toggleMobileSidebar);
+  document.querySelectorAll('.range-btn').forEach((b) => b.addEventListener('click', () => setRange(b.dataset.range)));
+  document.addEventListener('themechange', () => Charts.build(current));
 
-  // 2. Initialize Lucide Icons & Theme
-  if (window.lucide) {
-    lucide.createIcons();
-  }
-  initTheme();
-
-  // 3. Initial Dashboard Load (Default: '30d')
-  updateDashboard('30d');
-
-  // 4. Initial Table Render
-  renderTable(transactionsData);
-
-  // 5. Time Range Filter Controls
-  const rangeBtns = document.querySelectorAll('.range-btn');
-  rangeBtns.forEach(btn => {
-    btn.addEventListener('click', (e) => {
-      rangeBtns.forEach(b => b.classList.remove('active'));
-      e.target.classList.add('active');
-      
-      const period = e.target.dataset.range;
-      updateDashboard(period);
-    });
-  });
-
-  // 6. Table Filter Event Listeners
-  document.getElementById('tableSearch').addEventListener('input', filterTable);
-  document.getElementById('statusFilter').addEventListener('change', filterTable);
-});
-
-function updateDashboard(period) {
-  const data = dashboardData[period];
-  
-  // Update KPI Card Numbers & Badges
-  document.getElementById('kpiRevenue').textContent = data.kpis.revenue;
-  document.getElementById('kpiRevenueTrend').textContent = data.kpis.revenueTrend;
-  document.getElementById('kpiUsers').textContent = data.kpis.users;
-  document.getElementById('kpiUsersTrend').textContent = data.kpis.usersTrend;
-  document.getElementById('kpiChurn').textContent = data.kpis.churn;
-  document.getElementById('kpiChurnTrend').textContent = data.kpis.churnTrend;
-
-  // Render Analytics Chart
-  renderRevenueChart(data.chartLabels, data.chartData);
-}
+  Theme.render();
+  Table.render();
+  setRange(current);
+  if (window.lucide) lucide.createIcons();
+})();
