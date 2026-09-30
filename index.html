@@ -12,7 +12,7 @@
   <script src="https://unpkg.com/lucide@latest"></script>
 
   <!-- Stylesheets -->
-  <link rel="stylesheet" href="./css/variables.css" />
+  <link rel="stylesheet" href="css/variables.css" />
   <link rel="stylesheet" href="css/layout.css" />
   <link rel="stylesheet" href="css/components.css" />
 
@@ -46,17 +46,22 @@
     <!-- Main Content Area -->
     <main class="main-wrapper">
       
-      <!-- Header -->
+      <!-- Top Header -->
       <header class="top-header">
-        <div>
-          <h1>Dashboard Overview</h1>
-          <p class="subtitle">Welcome back! Here's your metrics breakdown.</p>
+        <div class="header-left">
+          <button id="mobileMenuBtn" class="mobile-menu-btn" aria-label="Toggle Menu">
+            <i data-lucide="menu"></i>
+          </button>
+          <div>
+            <h1>Dashboard Overview</h1>
+            <p class="subtitle">Welcome back! Here's your metrics breakdown.</p>
+          </div>
         </div>
         <div class="header-actions">
           <div class="time-range-picker">
-            <button class="range-btn" data-range="7d">7 Days</button>
-            <button class="range-btn active" data-range="30d">30 Days</button>
-            <button class="range-btn" data-range="12m">12 Months</button>
+            <button class="range-btn" data-range="7d">7D</button>
+            <button class="range-btn active" data-range="30d">30D</button>
+            <button class="range-btn" data-range="12m">12M</button>
           </div>
         </div>
       </header>
