@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pulse | SaaS Analytics Dashboard</title>
+  
+  <!-- Fonts & Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="./css/variables.css" />
+  <link rel="stylesheet" href="css/layout.css" />
+  <link rel="stylesheet" href="css/components.css" />
+
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <div class="dashboard-container">
+    
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+      <div class="brand">
+        <i data-lucide="activity" class="brand-icon"></i>
+        <h2>Pulse</h2>
+      </div>
+      <nav class="nav-menu">
+        <a href="#" class="nav-item active"><i data-lucide="layout-dashboard"></i> Overview</a>
+        <a href="#" class="nav-item"><i data-lucide="line-chart"></i> Analytics</a>
+        <a href="#" class="nav-item"><i data-lucide="users"></i> Customers</a>
+        <a href="#" class="nav-item"><i data-lucide="credit-card"></i> Billing</a>
+        <a href="#" class="nav-item"><i data-lucide="settings"></i> Settings</a>
+      </nav>
+      <div class="sidebar-footer">
+        <button id="themeToggleBtn" class="theme-btn">
+          <i data-lucide="sun" id="themeIcon"></i>
+          <span id="themeLabel">Light Mode</span>
+        </button>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="main-wrapper">
+      
+      <!-- Header -->
+      <header class="top-header">
+        <div>
+          <h1>Dashboard Overview</h1>
+          <p class="subtitle">Welcome back! Here's your metrics breakdown.</p>
+        </div>
+        <div class="header-actions">
+          <div class="time-range-picker">
+            <button class="range-btn" data-range="7d">7 Days</button>
+            <button class="range-btn active" data-range="30d">30 Days</button>
+            <button class="range-btn" data-range="12m">12 Months</button>
+          </div>
+        </div>
+      </header>
+
+      <!-- KPI Summary Cards Grid -->
+      <section class="kpi-grid">
+        <div class="kpi-card">
+          <div class="kpi-header">
+            <span>Total Revenue</span>
+            <i data-lucide="dollar-sign"></i>
+          </div>
+          <div class="kpi-body">
+            <h3 id="kpiRevenue">$48,290</h3>
+            <span class="badge badge-success" id="kpiRevenueTrend">+14.2%</span>
+          </div>
+        </div>
+
+        <div class="kpi-card">
+          <div class="kpi-header">
+            <span>Active Subscribers</span>
+            <i data-lucide="users"></i>
+          </div>
+          <div class="kpi-body">
+            <h3 id="kpiUsers">12,450</h3>
+            <span class="badge badge-success" id="kpiUsersTrend">+8.1%</span>
+          </div>
+        </div>
+
+        <div class="kpi-card">
+          <div class="kpi-header">
+            <span>Churn Rate</span>
+            <i data-lucide="user-minus"></i>
+          </div>
+          <div class="kpi-body">
+            <h3 id="kpiChurn">1.2%</h3>
+            <span class="badge badge-success" id="kpiChurnTrend">-0.4%</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Main Revenue Chart -->
+      <section class="chart-section card">
+        <div class="card-header">
+          <h3>Revenue Overview</h3>
+        </div>
+        <div class="chart-container">
+          <canvas id="revenueChart"></canvas>
+        </div>
+      </section>
+
+      <!-- Recent Transactions Table -->
+      <section class="table-section card">
+        <div class="card-header table-header-flex">
+          <h3>Recent Transactions</h3>
+          <div class="table-controls">
+            <input type="text" id="tableSearch" placeholder="Search customer or email..." class="search-input" />
+            <select id="statusFilter" class="select-input">
+              <option value="all">All Statuses</option>
+              <option value="completed">Completed</option>
+              <option value="pending">Pending</option>
+              <option value="failed">Failed</option>
+            </select>
+          </div>
+        </div>
+        <div class="table-wrapper">
+          <table id="transactionsTable">
+            <thead>
+              <tr>
+                <th>Customer</th>
+                <th>Plan</th>
+                <th>Amount</th>
+                <th>Status</th>
+                <th>Date</th>
+              </tr>
+            </thead>
+            <tbody id="tableBody">
+              <!-- Dynamically populated via JavaScript -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- Scripts -->
+  <script src="js/mockData.js"></script>
+  <script src="js/theme.js"></script>
+  <script src="js/charts.js"></script>
+  <script src="js/table.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
